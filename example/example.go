@@ -18,12 +18,10 @@ func main() {
 }
 
 type P struct {
-	zzserver.BaseRouter
-}
+	zzserver.BaseRouter}
 
 //ActionAll 接收客户端发送的消息
-func (p *P) ActionAll(c *zzserver.Client, message []byte) {
-	if string(message) == "close" {
+func (p *P) ActionAll(c *zzserver.Client, message []byte) {	if string(message) == "close" {
 		c.Close()
 	} else {
 		//c.SendJson(map[string]interface{}{"code": 0, "Message": "I received your message! thanks!"})
@@ -33,7 +31,6 @@ func (p *P) ActionAll(c *zzserver.Client, message []byte) {
 
 // Disconnect 客户端断开
 func (p *P) Disconnect(c *zzserver.Client) {
-
 }
 
 // BeforeServerClose 服务器要关闭的时候
