@@ -1,4 +1,4 @@
-package zzserver
+package zzServer
 
 import (
 	"encoding/json"
