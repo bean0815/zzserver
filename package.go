@@ -1,4 +1,4 @@
-package zzServer
+package zzserver
 
 import (
 	"bufio"

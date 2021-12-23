@@ -1,9 +1,9 @@
-package zzServer
+package zzserver
 
 import (
 	"encoding/json"
 	"fmt"
-	"gitee.com/douyaye/zz-server/zztools"
+	"gitee.com/douyaye/zzserver/zztools"
 	"log"
 	"net/http"
 	"os"
