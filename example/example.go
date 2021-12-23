@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gitee.com/douyaye/zzserver"
+	"github.com/bean0815/zzserver"
 )
 
 func main() {
@@ -18,10 +18,12 @@ func main() {
 }
 
 type P struct {
-	zzserver.BaseRouter}
+	zzserver.BaseRouter
+}
 
 //ActionAll 接收客户端发送的消息
-func (p *P) ActionAll(c *zzserver.Client, message []byte) {	if string(message) == "close" {
+func (p *P) ActionAll(c *zzserver.Client, message []byte) {
+	if string(message) == "close" {
 		c.Close()
 	} else {
 		//c.SendJson(map[string]interface{}{"code": 0, "Message": "I received your message! thanks!"})
