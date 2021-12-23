@@ -2,27 +2,27 @@ package main
 
 import (
 	"fmt"
-	"gitee.com/douyaye/zz-server"
+	"gitee.com/douyaye/zzserver"
 )
 
 func main() {
 
 	//设置接收路由
-	zzServer.AddRouter(&P{})
+	zzserver.AddRouter(&P{})
 
 	//开启服务
-	srv := zzServer.NewZZServer()
+	srv := zzserver.NewZZServer()
 	srv.WsPort = 9999 //
 	//srv.TcpPort = 9988  //不设置就不会启动监听
 	srv.Start()
 }
 
 type P struct {
-	zzServer.BaseRouter
+	zzserver.BaseRouter
 }
 
 //ActionAll 接收客户端发送的消息
-func (p *P) ActionAll(c *zzServer.Client, message []byte) {
+func (p *P) ActionAll(c *zzserver.Client, message []byte) {
 	if string(message) == "close" {
 		c.Close()
 	} else {
@@ -32,7 +32,7 @@ func (p *P) ActionAll(c *zzServer.Client, message []byte) {
 }
 
 // Disconnect 客户端断开
-func (p *P) Disconnect(c *zzServer.Client) {
+func (p *P) Disconnect(c *zzserver.Client) {
 
 }
 

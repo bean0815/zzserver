@@ -1,4 +1,4 @@
-package zzServer
+package zzserver
 
 /*
 //方法1 回调

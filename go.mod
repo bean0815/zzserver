@@ -1,4 +1,4 @@
-module gitee.com/douyaye/zz-server
+module gitee.com/douyaye/zzserver
 
 go 1.17
 
