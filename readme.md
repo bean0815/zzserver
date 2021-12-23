@@ -1,0 +1,3 @@
+# zzServer
+
+改项目是一个简易的socket服务端程序，支持webSocket以及普通tcpSocket
