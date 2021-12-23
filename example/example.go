@@ -12,7 +12,7 @@ func main() {
 
 	//开启服务
 	srv := zzServer.NewZZServer()
-	srv.WsPort = 9999 // 
+	srv.WsPort = 9999 //
 	//srv.TcpPort = 9988  //不设置就不会启动监听
 	srv.Start()
 }
