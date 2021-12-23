@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	server "zz-server/zzserver"
+	server "gitee.com/douyaye/zz-server/zzserver"
 )
 
 func main() {
