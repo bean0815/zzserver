@@ -1,4 +1,4 @@
-module zzServer
+module zz-server
 
 go 1.17
 

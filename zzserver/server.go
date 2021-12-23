@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"zzServer/zztools"
+	"zz-server/zztools"
 )
 
 // Hub maintains the set of active clients and broadcasts messages to the
