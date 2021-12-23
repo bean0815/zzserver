@@ -3,7 +3,7 @@ package zzserver
 import (
 	"encoding/json"
 	"fmt"
-	"gitee.com/douyaye/zzserver/zztools"
+	"github.com/bean0815/zzserver/zztools"
 	"log"
 	"net/http"
 	"os"

@@ -1,4 +1,4 @@
-module gitee.com/douyaye/zzserver
+module github.com/bean0815/zzserver
 
 go 1.17
 
