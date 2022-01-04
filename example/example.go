@@ -24,10 +24,12 @@ type P struct {
 //ActionAll 接收客户端发送的消息
 func (p *P) ActionAll(c *zzserver.Client, message []byte) {
 	if string(message) == "close" {
+		c.Server.SendToAll([]byte(fmt.Sprintf("user%d closed", c.ConnectionIndex)))
 		c.Close()
 	} else {
 		//c.SendJson(map[string]interface{}{"code": 0, "Message": "I received your message! thanks!"})
-		c.SendText(fmt.Sprintf("当前在线人数：%d", c.Server.Online()))
+		//c.SendText(fmt.Sprintf("当前在线人数：%d", c.Server.Online()))
+		c.Server.SendToAll([]byte(fmt.Sprintf("user%d say:%s", c.ConnectionIndex, string(message))))
 	}
 }
 
