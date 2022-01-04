@@ -74,9 +74,10 @@ func (h *Hub) run() {
 			// log.Println("当前人数:", h.ClientsNum)
 			// log.Print("用户 断开:"+client.GetRemoteAddr()+",当前登录:", len(h.clients), "未登录:", len(h.ClientsNotloggedin), "\r\n")
 		case message := <-h.broadcast: //广播消息
-			var socketMsg = Packet(message) //socket先封装, 再发送
+			//var socketMsg = Packet(message) //socket先封装, 再发送
 			for _, client := range h.clients {
-				client.sendByteWithNoPacket(message, socketMsg)
+				//client.sendByteWithNoPacket(message, socketMsg)
+				client.SendByte(message)
 			}
 		}
 	}
@@ -164,6 +165,7 @@ func (h *Hub) Start() {
 	defer func() {
 		h.Close()
 	}()
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	zztools.PrintServerIps()
 	if h.WsPort > 0 {
 		fmt.Println("监听Websocket：", h.WsPort)
@@ -173,6 +175,7 @@ func (h *Hub) Start() {
 		fmt.Println("监听TCP：", h.TcpPort)
 		go h.startTcpSocket()
 	}
+	log.Println("zz server start success~ ")
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)

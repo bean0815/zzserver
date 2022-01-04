@@ -57,8 +57,7 @@ type Client struct {
 	socketType      int
 	connWebsocket   *websocket.Conn
 	connSocket      net.Conn
-	bufWebsocket    chan []byte
-	bufSocket       chan []byte
+	bufSend         chan []byte
 	chanClose       chan bool
 	Server          *Hub        //server对线
 	User            interface{} //用户对象
@@ -66,7 +65,7 @@ type Client struct {
 	ConnectionIndex int         //
 	LastMsgTime     time.Time   //最后收到消息时间
 	Ip              string      //登录IP
-	closed          bool        //已经关闭状态
+	//closed          bool        //已经关闭状态
 }
 
 //处理消息
@@ -120,8 +119,8 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	client := &Client{
 		Server:          hub,
 		connWebsocket:   connWebsocket,
-		bufWebsocket:    make(chan []byte, 256),
-		chanClose:       make(chan bool),
+		bufSend:         make(chan []byte, 256),
+		chanClose:       make(chan bool, 1),
 		socketType:      typeWebsocket,
 		ConnectionIndex: int(cIndex),
 		LastMsgTime:     time.Now(),
@@ -143,7 +142,7 @@ func (c *Client) websocketWrite() {
 	}()
 	for {
 		select {
-		case message, ok := <-c.bufWebsocket:
+		case message, ok := <-c.bufSend:
 			c.connWebsocket.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
@@ -156,7 +155,7 @@ func (c *Client) websocketWrite() {
 			if err != nil {
 				return
 			}
-			w.Write(message)
+			_, _ = w.Write(message)
 			if err := w.Close(); err != nil {
 				return
 			}
@@ -230,10 +229,11 @@ func serverSocket(hub *Hub, socketaddr string) {
 
 		//uuid, _ := uuid.NewV4()
 		client := &Client{
-			Server:          hub,
-			connSocket:      connTCP,
-			bufSocket:       make(chan []byte, 256),
-			chanClose:       make(chan bool),
+			Server:     hub,
+			connSocket: connTCP,
+			//bufSocket:       make(chan []byte, 256),
+			bufSend:         make(chan []byte, 256),
+			chanClose:       make(chan bool, 1),
 			socketType:      typeSocket,
 			LastMsgTime:     time.Now(),
 			Ip:              ip,
@@ -299,7 +299,7 @@ func (c *Client) socketWrite() {
 	}()
 	for {
 		select {
-		case message, ok := <-c.bufSocket:
+		case message, ok := <-c.bufSend:
 			if !ok {
 				// The hub closed the channel.
 				return
@@ -365,7 +365,15 @@ func (c *Client) SendText(msg string) {
 
 //SendByte 发送byte, socket会进行编码后再发送
 func (c *Client) SendByte(bytes []byte) {
-	c.sendByteWithNoPacket(bytes, Packet(bytes))
+	//c.sendByteWithNoPacket(bytes, Packet(bytes))
+	if c.socketType == typeSocket {
+		bytes = Packet(bytes)
+	}
+	select {
+	case c.bufSend <- bytes:
+	default:
+		c.Close()
+	}
 }
 
 //SendJson 先把obj转为json对象再发送
@@ -375,17 +383,18 @@ func (c *Client) SendJson(obj interface{}) error {
 		return err
 	}
 	//fmt.Println("#", string(bytes))
-	c.sendByteWithNoPacket(bytes, Packet(bytes))
+	//c.sendByteWithNoPacket(bytes, Packet(bytes))
+	c.SendByte(bytes)
 	return nil
 }
 
 // sendByteWithNoPacket socket发送 不封装
-func (c *Client) sendByteWithNoPacket(bytesWs []byte, bytesSocket []byte) {
-	//一个Client中 send_websocket send_socket 只会存在一个
-	select {
-	case c.bufWebsocket <- bytesWs:
-	case c.bufSocket <- bytesSocket:
-	default:
-		c.Close()
-	}
-}
+//func (c *Client) sendByteWithNoPacket(bytesWs []byte, bytesSocket []byte) {
+//	//一个Client中 send_websocket send_socket 只会存在一个
+//	select {
+//	case c.bufSend <- bytesWs:
+//	case c.bufSocket <- bytesSocket:
+//	default:
+//		c.Close()
+//	}
+//}
