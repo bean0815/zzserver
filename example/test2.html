@@ -23,13 +23,7 @@
 
             appendMessage("* Connecting to server ..<br/>");
             // create a new websocket and connect
-            //ws = new window[support]('wss://www.gudougame.com:9991/');
-            //ws = new window[support]('ws://69.172.93.213:18888/');
             ws = new window[support]('ws://127.0.0.1:9999');
-
-            //ws = new window[support]('ws://183.146.209.121:9991/');
-
-            // when data is comming from the server, this metod is called
             ws.onmessage = function (evt) {
                 if (evt.data.indexOf("heartbeat") != -1) {
                     ws.send("{'t':'heartbeat'}");
@@ -95,7 +89,7 @@
         var interval
         function start() {
             interval = setInterval(() => {
-                document.getElementById('messageInput').value = '{"t":"bet","data":[0,0,0,0,10000,10000,10000,10000]}';
+                document.getElementById('messageInput').value = 'auto send message~ ';
                 sendMessage();
             }, 500);
         }
@@ -115,9 +109,9 @@
     <input type="button" id="sendButton" value="Send" onclick="sendMessage()" />
     <br />
     <span style="background-color:antiquewhite" onclick="s(this);"
-        class="spanSend">{"t":"login","data":{"gcidx":1100000003,"pid":11,"token":"2742D1521E1E43FE87D544A56345060D"}}</span><br />
+        class="spanSend">hello, I am here</span><br />
     <span style="background-color:antiquewhite" onclick="s(this);"
-        class="spanSend">{"t":"bet","data":[10000,10000,10000,10000,10000,10000,10000,10000]}</span><br />
+        class="spanSend">good morning~ every one </span><br />
     <span style="background-color:antiquewhite" onclick="s(this);"
         class="spanSend">close</span><br />
     <br />

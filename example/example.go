@@ -29,7 +29,7 @@ func (p *P) ActionAll(c *zzserver.Client, message []byte) {
 	} else {
 		//c.SendJson(map[string]interface{}{"code": 0, "Message": "I received your message! thanks!"})
 		//c.SendText(fmt.Sprintf("当前在线人数：%d", c.Server.Online()))
-		c.Server.SendToAll([]byte(fmt.Sprintf("user%d say:%s", c.ConnectionIndex, string(message))))
+		c.Server.SendToAll([]byte(fmt.Sprintf("user%d say: %s", c.ConnectionIndex, string(message))))
 	}
 }
 
