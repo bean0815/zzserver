@@ -184,7 +184,10 @@ func (h *Hub) Start() {
 }
 
 func (h *Hub) Close() {
-	Router.BeforeServerClose()
+	if Router != nil {
+		Router.BeforeServerClose()
+	}
+
 }
 
 func (h *Hub) Online() int {
