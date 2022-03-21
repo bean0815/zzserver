@@ -137,7 +137,6 @@ func (c *Client) websocketWrite() {
 	ticker1 := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker1.Stop()
-		disconnect(c)
 		_ = c.connWebsocket.Close()
 	}()
 	for {

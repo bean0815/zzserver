@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/bean0815/zzserver"
+	//"github.com/bean0815/zzserver"
+	"gitee.com/douyaye/zzserver"
 )
 
 func main() {
