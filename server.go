@@ -13,6 +13,7 @@ import (
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
 type Hub struct {
+	router IRouter
 
 	//监听的端口
 	WsPort  int
@@ -81,6 +82,10 @@ func (h *Hub) run() {
 			}
 		}
 	}
+}
+
+func (h *Hub) SetRouter(r IRouter) {
+	h.router = r
 }
 
 //SendToAll 广播消息
@@ -162,6 +167,10 @@ func (h *Hub) startWebsocketAndHttp() {
 }
 
 func (h *Hub) Start() {
+	if h.router == nil {
+		log.Fatalln("please set router use server.SetRouter()")
+		return
+	}
 	defer func() {
 		h.Close()
 	}()
@@ -184,8 +193,8 @@ func (h *Hub) Start() {
 }
 
 func (h *Hub) Close() {
-	if Router != nil {
-		Router.OnServerClose()
+	if h.router != nil {
+		h.router.OnServerClose()
 	}
 
 }
@@ -197,7 +206,7 @@ func (h *Hub) Online() int {
 //关闭服务器
 func closeserver() {
 	//ZZServer.IsClosing = true
-	//Router.OnServerClose()
+	//router.OnServerClose()
 	//log.Println("服务端 等待数据库队列完成!!")
 	//time.Sleep(1 * time.Second)
 	//zzdbhelp.Workor_end()

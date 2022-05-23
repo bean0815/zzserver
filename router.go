@@ -20,12 +20,6 @@ type IRouter interface {
 	OnConnected(c *Client)
 }
 
-var Router IRouter
-
-func AddRouter(r IRouter) {
-	Router = r
-}
-
 //BaseRouter 用于重写, 这样就不需要写出所有方法
 type BaseRouter struct{}
 

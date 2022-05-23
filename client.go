@@ -90,7 +90,7 @@ func actionAll(c *Client, message []byte) {
 	}()
 
 	c.LastMsgTime = time.Now()
-	Router.OnMessage(c, message)
+	c.Server.router.OnMessage(c, message)
 }
 
 func disconnect(c *Client) {
@@ -101,7 +101,7 @@ func disconnect(c *Client) {
 			log.Println("堆栈:", string(debug.Stack()))
 		}
 	}()
-	Router.OnDisconnect(c)
+	c.Server.router.OnDisconnect(c)
 }
 
 //ServeWs handles websocket requests from the peer.
@@ -175,7 +175,7 @@ func (c *Client) websocketWrite() {
 // ensures that there is at most one reader on a connection by executing all
 // reads from this goroutine.
 func (c *Client) websocketRead() {
-	Router.OnConnected(c)
+	c.Server.router.OnConnected(c)
 	ticker1 := time.NewTicker(pingPeriod)
 	defer func() {
 		//log.Println("websocketRead close", c.GetRemoteAddr())
@@ -249,7 +249,7 @@ func serverSocket(hub *Hub, socketaddr string) {
 //socket读取数据
 func (c *Client) socketRead() {
 	//readerChannel := make(chan []byte, 8)//老的写法
-	Router.OnConnected(c)
+	c.Server.router.OnConnected(c)
 	defer func() {
 		c.Server.disconnected <- c
 		_ = c.connSocket.Close()

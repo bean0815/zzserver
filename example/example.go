@@ -8,12 +8,10 @@ import (
 
 func main() {
 
-	//设置接收路由
-	zzserver.AddRouter(&P{})
-
 	//开启服务
 	srv := zzserver.NewZZServer()
-	srv.WsPort = 9999 //
+	srv.SetRouter(&P{}) //绑定路由接口
+	srv.WsPort = 9999   //websocket端口
 	//srv.TcpPort = 9988  //不设置就不会启动监听
 	srv.Start()
 }
@@ -28,8 +26,6 @@ func (p *P) OnMessage(c *zzserver.Client, message []byte) {
 		c.Server.SendToAll([]byte(fmt.Sprintf("user%d closed", c.ConnectionIndex)))
 		c.Close()
 	} else {
-		//c.SendJson(map[string]interface{}{"code": 0, "Message": "I received your message! thanks!"})
-		//c.SendText(fmt.Sprintf("当前在线人数：%d", c.Server.Online()))
 		c.Server.SendToAll([]byte(fmt.Sprintf("user%d say: %s", c.ConnectionIndex, string(message))))
 	}
 }
