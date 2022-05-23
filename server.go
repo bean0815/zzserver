@@ -3,7 +3,7 @@ package zzserver
 import (
 	"encoding/json"
 	"fmt"
-	"gitee.com/douyaye/zzserver/zztools"
+	//"gitee.com/douyaye/zzserver/zztools"
 	"log"
 	"net/http"
 	"os"
@@ -166,21 +166,21 @@ func (h *Hub) Start() {
 		h.Close()
 	}()
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
-	zztools.PrintServerIps()
+	//zztools.PrintServerIps()
 	if h.WsPort > 0 {
-		fmt.Println("监听Websocket：", h.WsPort)
+		log.Println("Websocket server at:", h.WsPort)
 		go h.startWebsocketAndHttp() //开启普通websocket监听
 	}
 	if h.TcpPort > 0 {
 		fmt.Println("监听TCP：", h.TcpPort)
 		go h.startTcpSocket()
 	}
-	log.Println("zz server start success~ ")
+	log.Println("zzServer start success")
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
 	s := <-c
-	log.Println("Got signal:", s, ", 程序退出")
+	log.Println("Got signal", s, "程序执行结束")
 }
 
 func (h *Hub) Close() {
