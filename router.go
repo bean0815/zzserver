@@ -13,10 +13,11 @@ func actionAll(c *Client, message []byte) {
 
 //IRouter 方法2: 接口
 type IRouter interface {
-	ActionAll(c *Client, message []byte) // ActionAll 用户协程中调用
-	Disconnect(c *Client)                //Disconnect hub协成中调用
-	BeforeServerClose()                  //关闭服务器执行一次
-	UpdateServer()
+	OnMessage(c *Client, message []byte) // OnMessage 用户协程中调用
+	OnDisconnect(c *Client)              // OnDisconnect hub协成中调用
+	OnServerClose()                      // 关闭服务器执行一次
+	OnServerUpdate()
+	OnConnected(c *Client)
 }
 
 var Router IRouter
@@ -28,7 +29,8 @@ func AddRouter(r IRouter) {
 //BaseRouter 用于重写, 这样就不需要写出所有方法
 type BaseRouter struct{}
 
-func (b *BaseRouter) ActionAll(c *Client, message []byte) {}
-func (b *BaseRouter) Disconnect(c *Client)                {}
-func (b *BaseRouter) BeforeServerClose()                  {}
-func (b *BaseRouter) UpdateServer()                       {}
+func (b *BaseRouter) OnMessage(c *Client, message []byte) {}
+func (b *BaseRouter) OnDisconnect(c *Client)              {}
+func (b *BaseRouter) OnServerClose()                      {}
+func (b *BaseRouter) OnServerUpdate()                     {}
+func (b *BaseRouter) OnConnected(c *Client)               {}

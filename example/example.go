@@ -22,8 +22,8 @@ type P struct {
 	zzserver.BaseRouter
 }
 
-//ActionAll 接收客户端发送的消息
-func (p *P) ActionAll(c *zzserver.Client, message []byte) {
+// OnMessage 接收客户端发送的消息
+func (p *P) OnMessage(c *zzserver.Client, message []byte) {
 	if string(message) == "close" {
 		c.Server.SendToAll([]byte(fmt.Sprintf("user%d closed", c.ConnectionIndex)))
 		c.Close()
@@ -34,11 +34,6 @@ func (p *P) ActionAll(c *zzserver.Client, message []byte) {
 	}
 }
 
-// Disconnect 客户端断开
-func (p *P) Disconnect(c *zzserver.Client) {
-}
-
-// BeforeServerClose 服务器要关闭的时候
-func (p *P) BeforeServerClose() {
-
+// OnDisconnect 客户端断开
+func (p *P) OnDisconnect(c *zzserver.Client) {
 }

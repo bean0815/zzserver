@@ -90,7 +90,7 @@ func actionAll(c *Client, message []byte) {
 	}()
 
 	c.LastMsgTime = time.Now()
-	Router.ActionAll(c, message)
+	Router.OnMessage(c, message)
 }
 
 func disconnect(c *Client) {
@@ -101,7 +101,7 @@ func disconnect(c *Client) {
 			log.Println("堆栈:", string(debug.Stack()))
 		}
 	}()
-	Router.Disconnect(c)
+	Router.OnDisconnect(c)
 }
 
 //ServeWs handles websocket requests from the peer.
@@ -111,7 +111,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		// log.Println("新用户连接websocket错误!", err)
 		return
 	}
-	log.Println("新websocket用户连接", r.RemoteAddr)
+	//log.Println("新websocket用户连接", r.RemoteAddr)
 	ip := strings.Split(r.RemoteAddr, ":")[0]
 
 	cIndex := atomic.AddInt64(&hub.ConnectionIndex, 1)
@@ -175,6 +175,7 @@ func (c *Client) websocketWrite() {
 // ensures that there is at most one reader on a connection by executing all
 // reads from this goroutine.
 func (c *Client) websocketRead() {
+	Router.OnConnected(c)
 	ticker1 := time.NewTicker(pingPeriod)
 	defer func() {
 		//log.Println("websocketRead close", c.GetRemoteAddr())
@@ -222,7 +223,7 @@ func serverSocket(hub *Hub, socketaddr string) {
 
 		// fmt.Println(conn_socket.RemoteAddr().String(), " 连接成功")
 		ip := strings.Split(connTCP.RemoteAddr().String(), ":")[0]
-		log.Println("新serverSocket用户连接:", connTCP.RemoteAddr().String())
+		//log.Println("新serverSocket用户连接:", connTCP.RemoteAddr().String())
 
 		cIndex := atomic.AddInt64(&hub.ConnectionIndex, 1)
 
@@ -248,6 +249,7 @@ func serverSocket(hub *Hub, socketaddr string) {
 //socket读取数据
 func (c *Client) socketRead() {
 	//readerChannel := make(chan []byte, 8)//老的写法
+	Router.OnConnected(c)
 	defer func() {
 		c.Server.disconnected <- c
 		_ = c.connSocket.Close()

@@ -185,7 +185,7 @@ func (h *Hub) Start() {
 
 func (h *Hub) Close() {
 	if Router != nil {
-		Router.BeforeServerClose()
+		Router.OnServerClose()
 	}
 
 }
@@ -197,7 +197,7 @@ func (h *Hub) Online() int {
 //关闭服务器
 func closeserver() {
 	//ZZServer.IsClosing = true
-	//Router.BeforeServerClose()
+	//Router.OnServerClose()
 	//log.Println("服务端 等待数据库队列完成!!")
 	//time.Sleep(1 * time.Second)
 	//zzdbhelp.Workor_end()
