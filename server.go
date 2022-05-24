@@ -173,10 +173,10 @@ func (h *Hub) Start() {
 		log.Fatalln("please set router use server.SetRouter()")
 		return
 	}
-	defer func() {
-		h.Close()
-		time.Sleep(time.Second)
-	}()
+	//defer func() {
+	//	h.Close()
+	//	time.Sleep(time.Second)
+	//}()
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	//zztools.PrintServerIps()
 	if h.WsPort > 0 {
@@ -192,7 +192,10 @@ func (h *Hub) Start() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, os.Kill)
 	s := <-c
-	log.Println("Got signal", s, "程序执行结束")
+	log.Println("Got signal", s, "程序执行结束 执行Close()")
+	h.Close()
+	time.Sleep(time.Second)
+	log.Println("服务器关闭, 再见~ ")
 }
 
 func (h *Hub) Close() {
