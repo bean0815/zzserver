@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"time"
+
 	//"github.com/bean0815/zzserver"
 	"gitee.com/douyaye/zzserver"
 )
@@ -32,4 +35,9 @@ func (p *P) OnMessage(c *zzserver.Client, message []byte) {
 
 // OnDisconnect 客户端断开
 func (p *P) OnDisconnect(c *zzserver.Client) {
+}
+func (p *P) OnServerClose() {
+	log.Println("OnServerClose.....")
+	time.Sleep(3 * time.Second)
+	log.Println("OnServerClose.....")
 }
