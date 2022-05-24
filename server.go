@@ -3,6 +3,8 @@ package zzserver
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	//"gitee.com/douyaye/zzserver/zztools"
 	"log"
 	"net/http"
@@ -173,6 +175,7 @@ func (h *Hub) Start() {
 	}
 	defer func() {
 		h.Close()
+		time.Sleep(time.Second)
 	}()
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	//zztools.PrintServerIps()
