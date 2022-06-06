@@ -59,7 +59,7 @@ type Client struct {
 	connSocket      net.Conn
 	bufSend         chan []byte
 	chanClose       chan bool
-	Server          *srv        //server对线
+	Server          *Server     //server对线
 	User            interface{} //用户对象
 	UserData        sync.Map    //保存一些用户自定义内容
 	ConnectionIndex int         //
@@ -105,7 +105,7 @@ func disconnect(c *Client) {
 }
 
 //ServeWs handles websocket requests from the peer.
-func serveWs(hub *srv, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *Server, w http.ResponseWriter, r *http.Request) {
 	connWebsocket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		// log.Println("新用户连接websocket错误!", err)
@@ -205,7 +205,7 @@ func (c *Client) websocketRead() {
 }
 
 //ServerSocket 连接
-func serverSocket(hub *srv, socketaddr string) {
+func serverSocket(hub *Server, socketaddr string) {
 	// processor.ServerSocket(hub)
 	netListen, err := net.Listen("tcp", socketaddr)
 	if err != nil {

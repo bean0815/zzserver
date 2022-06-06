@@ -12,9 +12,9 @@ import (
 	"os/signal"
 )
 
-// srv maintains the set of active clients and broadcasts messages to the
+// Server maintains the set of active clients and broadcasts messages to the
 // clients.
-type srv struct {
+type Server struct {
 	router IRouter
 
 	//监听的端口
@@ -32,8 +32,8 @@ type srv struct {
 //ZZServer 单例
 //var ZZServer *Server
 
-func NewZZServer() *srv {
-	s := &srv{
+func NewZZServer() *Server {
+	s := &Server{
 		clients:      make(map[int]*Client),
 		broadcast:    make(chan []byte, 64),
 		connected:    make(chan *Client, 64),
@@ -57,7 +57,7 @@ func NewZZServer() *srv {
 //}
 
 // run 开始
-func (h *srv) run() {
+func (h *Server) run() {
 	defer func() {
 		panic("hub run 方法运行终止 , 程序结束退出!")
 	}()
@@ -86,17 +86,17 @@ func (h *srv) run() {
 	}
 }
 
-func (h *srv) SetRouter(r IRouter) {
+func (h *Server) SetRouter(r IRouter) {
 	h.router = r
 }
 
 //SendToAll 广播消息
-func (h *srv) SendToAll(message []byte) {
+func (h *Server) SendToAll(message []byte) {
 	h.broadcast <- message
 }
 
 //SendToAllJson 广播消息
-func (h *srv) SendToAllJson(obj interface{}) {
+func (h *Server) SendToAllJson(obj interface{}) {
 	b, err := json.Marshal(obj)
 	if err != nil {
 		return
@@ -136,13 +136,13 @@ func (h *srv) SendToAllJson(obj interface{}) {
 //}
 
 // startTcpSocket 开启socket监听
-func (h *srv) startTcpSocket() {
+func (h *Server) startTcpSocket() {
 	//开启普通socket监听
 	serverSocket(h, fmt.Sprintf(":%d", h.TcpPort))
 }
 
 // startWebsocketAndHttp 开启websocket和http监听
-func (h *srv) startWebsocketAndHttp() {
+func (h *Server) startWebsocketAndHttp() {
 	//开启普通websocket监听
 	defer func() {
 		log.Fatalln("websocket监听 已经退出!")
@@ -168,7 +168,7 @@ func (h *srv) startWebsocketAndHttp() {
 	//}
 }
 
-func (h *srv) Start() {
+func (h *Server) Start() {
 	if h.router == nil {
 		log.Fatalln("please set router use server.SetRouter()")
 		return
@@ -198,14 +198,14 @@ func (h *srv) Start() {
 	log.Println("服务器关闭, 再见~ ")
 }
 
-func (h *srv) Close() {
+func (h *Server) Close() {
 	if h.router != nil {
 		h.router.OnServerClose()
 	}
 
 }
 
-func (h *srv) Online() int {
+func (h *Server) Online() int {
 	return h.onlineNumber
 }
 
