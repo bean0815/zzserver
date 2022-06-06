@@ -59,7 +59,7 @@ type Client struct {
 	connSocket      net.Conn
 	bufSend         chan []byte
 	chanClose       chan bool
-	Server          *Hub        //server对线
+	Server          *srv        //server对线
 	User            interface{} //用户对象
 	UserData        sync.Map    //保存一些用户自定义内容
 	ConnectionIndex int         //
@@ -105,7 +105,7 @@ func disconnect(c *Client) {
 }
 
 //ServeWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+func serveWs(hub *srv, w http.ResponseWriter, r *http.Request) {
 	connWebsocket, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		// log.Println("新用户连接websocket错误!", err)
@@ -205,7 +205,7 @@ func (c *Client) websocketRead() {
 }
 
 //ServerSocket 连接
-func serverSocket(hub *Hub, socketaddr string) {
+func serverSocket(hub *srv, socketaddr string) {
 	// processor.ServerSocket(hub)
 	netListen, err := net.Listen("tcp", socketaddr)
 	if err != nil {
@@ -263,7 +263,7 @@ func (c *Client) socketRead() {
 	//新写法
 	reader := bufio.NewReader(c.connSocket)
 	for {
-		data, err := Unpack2(reader)
+		data, err := unpack2(reader)
 		if err == io.EOF {
 			return
 		}
@@ -314,7 +314,7 @@ func (c *Client) socketWrite() {
 
 		case t := <-ticker1.C: //心跳包
 			c.connSocket.SetWriteDeadline(time.Now().Add(writeWait))
-			_, err := c.connSocket.Write(Packet([]byte(heartbeatMsg)))
+			_, err := c.connSocket.Write(packet([]byte(heartbeatMsg)))
 			if err != nil {
 				return
 			}
@@ -366,9 +366,9 @@ func (c *Client) SendText(msg string) {
 
 //SendByte 发送byte, socket会进行编码后再发送
 func (c *Client) SendByte(bytes []byte) {
-	//c.sendByteWithNoPacket(bytes, Packet(bytes))
+	//c.sendByteWithNoPacket(bytes, packet(bytes))
 	if c.socketType == typeSocket {
-		bytes = Packet(bytes)
+		bytes = packet(bytes)
 	}
 	select {
 	case c.bufSend <- bytes:
@@ -384,7 +384,7 @@ func (c *Client) SendJson(obj interface{}) error {
 		return err
 	}
 	//fmt.Println("#", string(bytes))
-	//c.sendByteWithNoPacket(bytes, Packet(bytes))
+	//c.sendByteWithNoPacket(bytes, packet(bytes))
 	c.SendByte(bytes)
 	return nil
 }

@@ -8,13 +8,13 @@ import (
 	"fmt"
 )
 
-// Packet 封包
-func Packet(message []byte) []byte {
-	return append(IntToBytes(len(message)), message...)
+// packet 封包
+func packet(message []byte) []byte {
+	return append(intToBytes(len(message)), message...)
 }
 
-// IntToBytes 整形转换成字节
-func IntToBytes(n int) []byte {
+// intToBytes 整形转换成字节
+func intToBytes(n int) []byte {
 	x := int32(n)
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	binary.Write(bytesBuffer, binary.LittleEndian, x)
@@ -22,8 +22,8 @@ func IntToBytes(n int) []byte {
 	return bytesBuffer.Bytes()
 }
 
-// Unpack 解包
-func Unpack(buffer []byte, readerChannel chan []byte) []byte {
+// unpack 解包
+func unpack(buffer []byte, readerChannel chan []byte) []byte {
 	// fmt.Println("解包:buffer:", buffer)
 	length := len(buffer)
 	// fmt.Println("解包:length:", length)
@@ -32,7 +32,7 @@ func Unpack(buffer []byte, readerChannel chan []byte) []byte {
 		if length < i+4 {
 			break
 		}
-		messageLength := BytesToInt(buffer[i : i+4])
+		messageLength := bytesToInt(buffer[i : i+4])
 		if messageLength < 0 || length < i+4+messageLength {
 			break
 		}
@@ -47,16 +47,16 @@ func Unpack(buffer []byte, readerChannel chan []byte) []byte {
 	return buffer[i:]
 }
 
-// BytesToInt 字节转换成整形
-func BytesToInt(b []byte) int {
+// bytesToInt 字节转换成整形
+func bytesToInt(b []byte) int {
 	bytesBuffer := bytes.NewBuffer(b)
 	var x int32
 	_ = binary.Read(bytesBuffer, binary.LittleEndian, &x)
 	return int(x)
 }
 
-// Packet2 封包2
-func Packet2(message []byte) ([]byte, error) {
+// packet2 封包2
+func packet2(message []byte) ([]byte, error) {
 	var length = int32(len(message))
 	var pkg = new(bytes.Buffer)
 	//tou
@@ -71,8 +71,8 @@ func Packet2(message []byte) ([]byte, error) {
 	return pkg.Bytes(), nil
 }
 
-// Unpack2 解包2
-func Unpack2(reader *bufio.Reader) ([]byte, error) {
+// unpack2 解包2
+func unpack2(reader *bufio.Reader) ([]byte, error) {
 	//buffer返回缓冲区中现有的可读字节数
 	bfed := int32(reader.Buffered())
 	if bfed <= 4 {
