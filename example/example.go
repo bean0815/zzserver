@@ -10,7 +10,6 @@ import (
 )
 
 func main() {
-
 	//开启服务
 	srv := zzserver.NewZZServer()
 
@@ -32,7 +31,6 @@ func main() {
 	srv.WsPort = 9999   //websocket端口
 	//srv.TcpPort = 9988  //不设置就不会启动监听
 	srv.Start()
-
 }
 
 type P struct {
