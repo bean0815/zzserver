@@ -13,10 +13,26 @@ func main() {
 
 	//开启服务
 	srv := zzserver.NewZZServer()
+
+	go func() {
+		t := time.Tick(5 * time.Second)
+		for {
+			<-t
+			n := time.Now()
+			srv.Range(func(c *zzserver.Client) bool {
+				if n.Sub(c.LastMsgTime) > 10*time.Second {
+					c.Close()
+				}
+				return true
+			})
+		}
+	}()
+
 	srv.SetRouter(&P{}) //绑定路由接口
 	srv.WsPort = 9999   //websocket端口
 	//srv.TcpPort = 9988  //不设置就不会启动监听
 	srv.Start()
+
 }
 
 type P struct {

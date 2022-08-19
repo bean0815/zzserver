@@ -21,12 +21,13 @@ type Server struct {
 	WsPort  int
 	TcpPort int
 
-	connected       chan *Client    //刚进入的,放入管道
-	disconnected    chan *Client    //退出的,放入管道
-	clients         map[int]*Client // [登陆序号]客户端
-	onlineNumber    int             //在线人数
-	broadcast       chan []byte     //广播消息
-	ConnectionIndex int64           //连接计数
+	connected       chan *Client              //刚进入的,放入管道
+	disconnected    chan *Client              //退出的,放入管道
+	clients         map[int]*Client           // [登陆序号]客户端
+	onlineNumber    int                       //在线人数
+	broadcast       chan []byte               //广播消息
+	ConnectionIndex int64                     //连接计数
+	chanRange       chan func(c *Client) bool //
 }
 
 //ZZServer 单例
@@ -38,6 +39,7 @@ func NewZZServer() *Server {
 		broadcast:    make(chan []byte, 64),
 		connected:    make(chan *Client, 64),
 		disconnected: make(chan *Client, 64),
+		chanRange:    make(chan func(c *Client) bool, 64),
 	}
 	go s.run()
 	return s
@@ -81,6 +83,12 @@ func (h *Server) run() {
 			for _, client := range h.clients {
 				//client.sendByteWithNoPacket(message, socketMsg)
 				client.SendByte(message)
+			}
+		case f := <-h.chanRange:
+			for _, client := range h.clients {
+				if !f(client) {
+					break
+				}
 			}
 		}
 	}
@@ -207,6 +215,16 @@ func (h *Server) Close() {
 
 func (h *Server) Online() int {
 	return h.onlineNumber
+}
+
+//Range 在同一个go中执行, 不要执行很久的操作
+func (h *Server) Range(f func(c *Client) bool) {
+	select {
+	case h.chanRange <- f:
+	default:
+		log.Println("(h *Server) Range ERROR:  chan is full")
+		//return errors.New("chan is full")
+	}
 }
 
 //关闭服务器
