@@ -111,8 +111,27 @@ func serveWs(hub *Server, w http.ResponseWriter, r *http.Request) {
 		// log.Println("新用户连接websocket错误!", err)
 		return
 	}
+
+	forwardedIp := strings.Split(r.Header.Get("X-Forwarded-For"), ",")[0]
+	realIp := r.Header.Get("X-real-ip")
+	remoteIp, _, _ := net.SplitHostPort(strings.TrimSpace(r.RemoteAddr))
+	ip := forwardedIp
+	if strings.Contains(ip, "127.0.0.1") || ip == "" {
+		ip = realIp
+		if strings.Contains(ip, "127.0.0.1") || ip == "" {
+			ip = remoteIp
+		}
+		if ip == "" {
+			ip = "127.0.0.1"
+		}
+	}
+
+	//log.Println("r.RemoteAddr:", r.RemoteAddr)
+	//log.Println("X-Forwarded-For:", r.Header.Get("X-Forwarded-For"))
+	//log.Println("X-real-ip:", r.Header.Get("X-real-ip"))
+
 	//log.Println("新websocket用户连接", r.RemoteAddr)
-	ip := strings.Split(r.RemoteAddr, ":")[0]
+	//ip := strings.Split(r.RemoteAddr, ":")[0]
 
 	cIndex := atomic.AddInt64(&hub.ConnectionIndex, 1)
 
